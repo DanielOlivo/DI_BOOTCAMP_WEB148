@@ -146,3 +146,57 @@ select sum(max) from (
     group by full_name
 );
 
+
+-- exercise 3
+-- Create a table named purchases. It should have 3 columns :
+-- id : the primary key of the table
+-- customer_id : this column references the table customers
+-- item_id : this column references the table items
+-- quantity_purchased : this column is the quantity of items purchased by a certain customer
+create table purchases(
+    id serial primary key,
+    customer_id integer,
+    item_id integer,
+    quantity_purchased integer
+);
+
+select * from purchases;
+
+insert into purchases(id, customer_id, item_id, quantity_purchased)
+values
+(1,3,3,1),
+(2,5,2,10),
+(3,1,1,2);
+
+-- Use SQL to get the following from the database:
+-- All purchases. Is this information useful to us?
+select * from purchases;
+-- nope
+
+-- All purchases, joining with the customers table.
+select first_name, last_name, purchases.item_id, quantity_purchased 
+from purchases
+inner join customers
+on customers.customer_id = purchases.customer_id;
+
+-- Purchases of the customer with the ID equal to 5.
+select first_name, last_name, purchases.item_id, quantity_purchased 
+from purchases
+inner join (select * from customers where customer_id=5) as customers
+on customers.customer_id = purchases.customer_id;
+
+
+-- Purchases for a large desk AND a small desk
+select * from (
+    select items.item_name, purchases.customer_id, quantity_purchased from purchases
+    inner join items
+    on items.item_id = purchases.item_id
+)
+where item_name like '%Desk';
+
+-- update items set item_id=1 where item_name='Small Desk';
+-- update items set item_id=2 where item_name='Large Desk';
+-- update items set item_id=3 where item_name='Fan';
+
+-- select * from purchases;
+-- select * from items;
