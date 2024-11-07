@@ -61,3 +61,88 @@ set address_id=1000
 where customer_id=310;
 
 
+-- exercise 2
+-- grant select, insert, update, delete on all tables in SCHEMA public to daniel;
+
+-- Update
+-- ‘Lea Benichou’ and ‘Marc Benichou’ are twins, they should have the same birth_dates. Update both their birth_dates to 02/11/1998.
+update students
+set birth_date='02/11/1998'
+where last_name like '%Benichou'
+;
+
+select * from students;
+
+-- Change the last_name of David from ‘Grez’ to ‘Guez’.
+update students 
+set last_name='Guez'
+where id=5;
+
+select * from students;
+
+-- Delete
+-- Delete the student named ‘Lea Benichou’ from the table.
+delete from students 
+where first_name='Lea' and last_name='Benichou';
+
+select * from students;
+
+-- Count
+-- Count how many students are in the table.
+select count(*) from students; -- 5
+
+-- Count how many students were born after 1/01/2000.
+select count(*) from students
+where birth_date > '1/01/2000'; -- 2
+
+
+--grant create on database bootcamp to daniel;
+-- Insert / Alter
+-- Add a column to the student table called math_grade.
+alter table students 
+add math_grade integer;
+
+select * from students;
+
+-- Add 80 to the student which id is 1.
+update students
+set math_grade=80 
+where id=1;
+
+-- Add 90 to the students which have ids of 2 or 4.
+update students
+set math_grade=90 
+where id in (2,4);
+
+
+-- Add 40 to the student which id is 6.
+update students
+set math_grade=40 
+where id=6;
+
+-- Count how many students have a grade bigger than 83
+select count(*) from students where math_grade > 83; -- 2
+
+-- Add another student named ‘Omer Simpson’ with the same birth_date as the one already in the table. Give him a grade of 70.
+insert into students(last_name, first_name, birth_date, math_grade)
+values('Simpson', 'Omer', '1980-10-03', 70);
+
+-- Now, in the table, ‘Omer Simpson’ should appear twice. It’s the same student, although he received 2 different grades because he retook the math exam.
+
+-- Bonus: Count how many grades each student has.
+-- Tip: You should display the first_name, last_name and the number of grades of each student. If you followed the instructions above correctly, all the students should have 1 math grade, except Omer Simpson which has 2.
+-- Tip : Use an alias called total_grade to fetch the grades.
+-- Hint : Use GROUP BY.
+
+-- TO THE CHECKER: GUEZ without grades!
+select (first_name, last_name) as full_name, count(math_grade) from students
+group by full_name;
+
+-- SUM
+-- Find the sum of all the students grades.
+select sum(max) from (
+    select (first_name, last_name) as full_name, max(math_grade) from students
+    where math_grade is not null
+    group by full_name
+);
+
