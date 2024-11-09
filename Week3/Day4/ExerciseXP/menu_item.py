@@ -12,12 +12,17 @@ class MenuItem:
         if toreturn:
             result = cursor.fetchall()
             return result
+        else:
+            cls.connection.commit()
 
     def __init__(self, name, cost):
         self.__name = name
         self.__cost = cost
 
     def update(self, name:str, price:int):
+        query = f"update menu_items set item_name='{name}', item_price={price} where item_name='{self.__name}';"
+        print(query)
+        MenuItem.apply(query)
         self.__name = name
         self.__cost = price
 
@@ -31,3 +36,6 @@ class MenuItem:
         query += f"('{self.__name}', {self.__cost});"
         print('query: ', query)
         MenuItem.apply(query)
+
+    def __str__(self):
+        return f"Item: {self.__name}, {self.__cost}"

@@ -16,13 +16,19 @@ class MenuManager:
 
     @classmethod
     def get_by_name(cls, name):
-        query = f"select * from menu_items where item_name='{name}';"
-        return MenuManager.apply(query, True)
+        query = f"select item_name, item_price from menu_items where item_name='{name}';"
+        result = MenuManager.apply(query, True)
+        if result is None or not result:
+            return None
+        elif isinstance(result, list):
+            return MenuItem(result[0][0], result[0][1])
+        else:
+            return MenuItem(result[0], result[1])
 
     @classmethod
     def all(cls):
-        query = f"select * from menu_items;"
-        return MenuManager.apply(query, True)
+        query = f"select item_name, item_price from menu_items;"
+        return [MenuItem(name, cost) for name, cost in MenuManager.apply(query, True)]
 
     @classmethod
     def delete_all(cls):
@@ -30,33 +36,33 @@ class MenuManager:
 
     
 
-MenuItem.connection = psycopg2.connect(host='localhost', user='daniel', password='1234', dbname='restaurant')
-MenuManager.connection = MenuItem.connection
+# MenuItem.connection = psycopg2.connect(host='localhost', user='daniel', password='1234', dbname='restaurant')
+# MenuManager.connection = MenuItem.connection
 
-MenuManager.delete_all()
+# MenuManager.delete_all()
 
-item = MenuItem('Burger', 35)
-item.save()
-print('save')
-print(MenuManager.all())
+# item = MenuItem('Burger', 35)
+# item.save()
+# print('save')
+# print(MenuManager.all())
 
-print('delete')
-item.delete()
-print(MenuManager.all())
+# print('delete')
+# item.delete()
+# print(MenuManager.all())
 
-print('update')
-item.update('Veggie Burger', 37)
-item.save()
-print(MenuManager.all())
-
-
-print('get by name')
-item2 = MenuManager.get_by_name('Beef Stew')
-print(item2)
-items = MenuManager.all()
-
-print('all')
-print(items)
+# print('update')
+# item.update('Veggie Burger', 37)
+# item.save()
+# print(MenuManager.all())
 
 
-MenuItem.connection.close()
+# print('get by name')
+# item2 = MenuManager.get_by_name('Beef Stew')
+# print(item2)
+# items = MenuManager.all()
+
+# print('all')
+# print(items)
+
+
+# MenuItem.connection.close()
