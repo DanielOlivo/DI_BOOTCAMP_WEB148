@@ -167,3 +167,12 @@ const details = {
 
 // console.log(`my ${details.my} is ${details.is} the ${details.the}`);
 
+// exercise 7: secret group
+const names = ["Jack", "Philip", "Sarah", "Amanda", "Bernard", "Kyle"];
+// A group of friends have decided to start a secret society. 
+// The society’s name will be the first letter of each of their names sorted in alphabetical order.
+// Hint: a string is an array of letters
+let societyName = names.map((name) => name[0]).sort().join('');
+
+// Console.log the name of their secret society. The output should be “ABJKPS”
+// console.log(societyName);
