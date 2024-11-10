@@ -158,4 +158,12 @@ let family = {
 //     console.log(family[property]);
 // }
 
+//exercise 6: rudolf
+const details = {
+  my: 'name',
+  is: 'Rudolf',
+  the: 'reindeer'
+}
+
+// console.log(`my ${details.my} is ${details.is} the ${details.the}`);
 
