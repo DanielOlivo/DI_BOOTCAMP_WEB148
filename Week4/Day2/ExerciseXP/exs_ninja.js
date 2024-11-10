@@ -34,9 +34,42 @@ function compareBMI(o1, o2){
 
 // Display the name of the person who has the largest BMI.
 let firstIsGreater = compareBMI(person1, person2);
-if(firstIsGreater){
-    console.log(`${person1.FullName} has BMI larger`);
+// if(firstIsGreater){
+//     console.log(`${person1.FullName} has BMI larger`);
+// }
+// else {
+//     console.log(`${person2.FullName} has BMI larger`);
+// }
+
+
+// exercise 2: grade average
+// Create a function called findAvg(gradesList) that takes an argument called gradesList.
+// Your function must calculate and console.log the average.
+function findAvg(gradesList){
+    let result = 0
+    for(grade of gradesList){
+        result += grade;
+    }
+    result = result / gradesList.length;
+    console.log(`avg: ${result}`);
+    return result
 }
-else {
-    console.log(`${person2.FullName} has BMI larger`);
+
+// If the average is above 65 let the user know they passed
+// If the average is below 65 let the user know they failed and must repeat the course.
+function isPassed(grade){
+    if(grade > 65){
+        console.log("Passed!");
+    }
+    else {
+        console.log("Failed");
+    }
 }
+
+let badGrades = [50,50,60,70,50];
+// isPassed(findAvg(badGrades));
+let goodGrades = [70, 80, 90, 80, 90];
+// isPassed(findAvg(goodGrades));
+
+// Bonus Try and split parts 1,2 and 3,4 of this exercise to two separate functions.
+// Hint One function must call the other.
