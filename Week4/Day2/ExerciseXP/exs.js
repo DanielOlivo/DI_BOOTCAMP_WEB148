@@ -51,3 +51,28 @@ for(i = 0; i < people.length; i++){
         break;
     }
 }
+
+
+// exercise 2: your favorite color
+// Create an array called colors where the value is a list of your five favorite colors.
+let colors = ["Blue", "Purple", "Periwinkle", "Pink", "Black"]
+colors
+
+// Loop through the array and as you loop console.log a string like so: “My #1 choice is blue”, “My #2 choice is red” ect… .
+for(i = 1; i <= colors.length; i++){
+    console.log(`My #${i} choice is ${colors[i-1]}`);
+}
+
+// Bonus: Change it to console.log “My 1st choice”, “My 2nd choice”, “My 3rd choice”, picking the correct suffix for each number.
+// Hint : create an array of suffixes to do the Bonus
+let suffixes = ["st", "nd", "rd"];
+suffixes
+for(i = 1; i <= colors.length; i++){
+    if(i > suffixes.length){
+        console.log(`My ${i}th choice is ${colors[i-1]}`);
+    } 
+    else {
+        console.log(`My ${i}${suffixes[i-1]} choice is ${colors[i-1]}`);
+    }
+}
+
