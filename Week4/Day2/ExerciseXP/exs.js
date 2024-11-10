@@ -139,3 +139,23 @@ const building = {
 //     console.log("leave alone");
 // };
 
+
+// exercise 5: family
+// Create an object called family with a few key value pairs.
+let family = {
+    key1: "item1",
+    key2: "item2",
+    key3: "item3",
+};
+
+// Using a for in loop, console.log the keys of the object.
+// for(const property in family){
+//     console.log(property);
+// }
+
+// Using a for in loop, console.log the values of the object.
+// for(const property in family){
+//     console.log(family[property]);
+// }
+
+
