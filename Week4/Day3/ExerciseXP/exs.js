@@ -59,3 +59,21 @@ function myBill2(){
 }
 // console.log(myBill2());
 // console.log(stock);
+
+
+// exercise 3: what's in my wallet?
+// Create a function named changeEnough(itemPrice, amountOfChange) that receives two arguments :
+// an item price
+// and an array representing the amount of change in your pocket.
+
+// In the function, determine whether or not you can afford the item.
+// If the sum of the change is bigger or equal than the item’s price 
+// (ie. it means that you can afford the item), the function should return true
+// If the sum of the change is smaller than the item’s price 
+// (ie. it means that you cannot afford the item) the function should return false
+function changeEnough(itemPrice, amountOfChange){
+    let costs = [0.25, 0.10, 0.05, 0.01];
+    return itemPrice < amountOfChange.map((a, i) => a * costs[i]).reduce((s, a) => s + a);
+}
+// console.log(changeEnough(14.11, [2,100,0,0]) ); // false
+// console.log(changeEnough(0.75, [0,0,20,5])); // true
