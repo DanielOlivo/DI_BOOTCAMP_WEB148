@@ -1,0 +1,52 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+
+    /* background-image: url('background.jpg'); */
+    background-image: url('https://images.hdqwalls.com/wallpapers/bocchi-the-rock-r8.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+
+#root {
+    position: absolute;
+    bottom: 40px;
+
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    margin-top: 10%;
+    margin-left: 30px;
+    margin-right:30px;
+}
+
+.item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-left:10px;
+    margin-right: 10px;
+
+    border: 1px solid #5e6876;
+
+    width: 80px;
+
+
+    color: #5e6876;
+
+    transition: color 0.8s, border 0.8s;
+
+}
+
+.item:hover {
+    /* width: 100px; */
+    color: lightblue;
+    border: 1px solid lightblue;
+    
+}
+
