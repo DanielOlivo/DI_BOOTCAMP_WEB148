@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head><title>Exercise Gold: Page 1</title></head>
+    <body>
+        <form>
+
+            <div>
+                <label>NAME:</label>
+                <input type="text" id="first">
+            </div>
+
+            <div>
+                <label>LASTNAME:</label>
+                <input type="text" id="last">
+                <button type="submit">Submit</button>
+            </div>
+        </form>
+
+        <script>
+            const form = document.querySelector('form');
+            const name = document.getElementById('first');
+            const last = document.getElementById('last');
+
+            form.onsubmit = function(e){
+                e.preventDefault();
+                
+                localStorage.setItem('data', JSON.stringify({
+                    first: name.value,
+                    last : last.value
+                }));
+                window.location.href = 'exs_gold_2.html';
+            };
+
+
+        </script>
+    </body>
+</html>

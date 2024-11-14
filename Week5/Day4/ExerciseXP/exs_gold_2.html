@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+    <head><title>Exercise Gold: Page 2</title></head>
+    <body>
+        <p>Full Name: <span id="first"></span> <span id="last"></span></p>
+
+
+        <script>
+            let {first, last} = JSON.parse(localStorage.getItem('data'));
+
+            document.getElementById('first').innerText = first;
+            document.getElementById('last').innerText = last;
+        </script>
+    </body>
+</html>
