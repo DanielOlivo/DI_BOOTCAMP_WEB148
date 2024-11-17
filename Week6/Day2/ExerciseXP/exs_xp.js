@@ -33,3 +33,20 @@ async function exercise2(){
     }
 }
 // exercise2();
+
+
+// exercise 3: async function
+// fetch("https://www.swapi.tech/api/starships/9/")
+//     .then(response => response.json())
+//     .then(objectStarWars => console.log(objectStarWars.result));
+async function exercise3(){
+    try{
+        const response = await fetch("https://www.swapi.tech/api/starships/9/");
+        const json = await response.json();
+        console.log(json.result);
+    }
+    catch(err){
+        console.log(err);
+    }
+}
+// exercise3();
