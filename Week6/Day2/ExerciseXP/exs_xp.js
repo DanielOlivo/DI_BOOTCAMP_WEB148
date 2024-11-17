@@ -50,3 +50,24 @@ async function exercise3(){
     }
 }
 // exercise3();
+
+
+// exercise 4: analyse
+
+// this function returns promise which resolves itself in 2 seconds with argument 'resolved'
+function resolveAfter2Seconds() {
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve('resolved');
+        }, 2000);
+    });
+}
+
+// and this function calls previous one, waits for 2 seconds and consoles the result of that function
+async function asyncCall() {
+    console.log('calling');
+    let result = await resolveAfter2Seconds();
+    console.log(result);
+}
+
+// asyncCall();
