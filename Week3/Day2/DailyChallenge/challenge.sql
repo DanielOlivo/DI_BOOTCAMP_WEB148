@@ -26,26 +26,20 @@ SELECT * FROM SecondTab;
 
 -- --------------------------------
 
-SELECT COUNT(*) 
-FROM FirstTab AS ft WHERE ft.id NOT IN ( SELECT id FROM SecondTab WHERE id IS NULL );
+-- SELECT COUNT(*) 
+-- FROM FirstTab AS ft WHERE ft.id NOT IN ( SELECT id FROM SecondTab WHERE id IS NULL );
 -- 0
 
 
- SELECT COUNT(*) 
-    FROM FirstTab AS ft WHERE ft.id NOT IN ( SELECT id FROM SecondTab WHERE id = 5 );
+--  SELECT COUNT(*) 
+--     FROM FirstTab AS ft WHERE ft.id NOT IN ( SELECT id FROM SecondTab WHERE id = 5 );
 -- 2
 
-SELECT COUNT(*) 
-    FROM FirstTab AS ft WHERE ft.id NOT IN ( SELECT id FROM SecondTab );
--- 2, but the result is 0
--- I'm confused
--- first has: 5, 6, 7, null
--- second has: 5, null
--- ids from the first which are not in the second: 6 and 7
--- upd: I watched the video
+-- SELECT COUNT(*) 
+--     FROM FirstTab AS ft WHERE ft.id NOT IN ( SELECT id FROM SecondTab );
+-- 0, because of null
 
-
-SELECT COUNT(*) 
-    FROM FirstTab AS ft WHERE ft.id NOT IN ( SELECT id FROM SecondTab WHERE id IS NOT NULL );
+-- SELECT COUNT(*) 
+--     FROM FirstTab AS ft WHERE ft.id NOT IN ( SELECT id FROM SecondTab WHERE id IS NOT NULL );
 -- 2
 
