@@ -42,10 +42,10 @@
 
 -- 2.11 Not satisfied with the results. Write a query which will find the next 10 cheapest movies.
 -- Bonus: Try to not use LIMIT.
--- SELECT * FROM film
--- WHERE film_id NOT IN (SELECT film_id FROM film ORDER BY replacement_cost ASC OFFSET 20)
--- ORDER BY replacement_cost ASC
--- OFFSET 10;
+(SELECT * FROM film
+ORDER BY replacement_cost ASC
+OFFSET 10)
+FETCH FIRST 10 ROWS ONLY;
 
 -- 2.12 Write a query which will join the data in the customer table and the payment table. You want to get the first name and last name from the curstomer table, as well as the amount and the date of every payment made by a customer, ordered by their id (from 1 to…).
 -- SELECT customer.first_name, customer.last_name, payment.amount, payment_date
