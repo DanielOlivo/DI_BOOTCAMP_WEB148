@@ -1,38 +1,35 @@
-create table regions(
-    id serial primary key,
-    name varchar(50) not null unique
+CREATE TABLE regions(
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE
 );
 
 select * from regions;
 
--- insert into regions(name) values('reg1'), ('reg2');
--- insert into regions(name) values('reg1');
-
-create table countries(
-    id serial primary key,
-    region_id serial not null,
-    name varchar(100) unique not null,
-    foreign key (region_id) references regions(id) on delete cascade on update cascade
+CREATE TABLE countries(
+    id SERIAL PRIMARY KEY,
+    region_id SERIAL NOT NULL,
+    name VARCHAR(100) UNIQUE NOT NULL,
+    FOREIGN KEY (region_id) REFERENCES regions(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-create table capitals(
-    id serial primary key,
-    country_id serial not null,
-    name varchar(100) not null,
-    foreign key (country_id) references countries(id) on delete cascade on update cascade
+CREATE TABLE capitals(
+    id SERIAL PRIMARY KEY,
+    country_id SERIAL NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    FOREIGN KEY (country_id) REFERENCES countries(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-create table flags(
-    id serial primary key,
-    country_id serial not null,
-    png varchar(255),
-    svg varchar(255),
-    foreign key (country_id) references countries(id) on delete cascade on update cascade
+CREATE TABLE flags(
+    id SERIAL PRIMARY KEY,
+    country_id SERIAL NOT NULL,
+    png VARCHAR(255),
+    svg VARCHAR(255),
+    FOREIGN KEY (country_id) REFERENCES countries(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-create table populations(
-    id serial primary key,
-    country_id serial not null,
-    population int not null,
-    foreign key (country_id) references countries(id) on delete cascade on update cascade
+CREATE TABLE populations(
+    id SERIAL PRIMARY KEY,
+    country_id SERIAL NOT NULL,
+    population INT NOT NULL,
+    FOREIGN KEY (country_id) REFERENCES countries(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
