@@ -1,9 +1,11 @@
-function mergeWord(word, prev=[]){
+function mergeWords(word, prev=[]){
     if(word === undefined){
         return prev.join(' ');
     } 
     else {
         prev.push(word)
-        return (other) => mergeWord(other, prev);
+        return (other) => mergeWords(other, prev);
     }
 }
+
+// mergeWords('There')('is')('no')('spoon.')();
