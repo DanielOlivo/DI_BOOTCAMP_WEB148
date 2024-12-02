@@ -20,17 +20,39 @@ module.exports = userService = {
         return row[0].password;
     },
 
+    // create: async(user) => {
+    //     const {username, email, first_name, last_name, hash} = user;
+    //     const id = await db('users').insert({
+    //         username: username,
+    //         email: email,
+    //         first_name: first_name,
+    //         last_name: last_name}, ['id']);
+    //     const _ = await db('hashpwd').insert({
+    //         username: username, 
+    //         password: hash}); 
+    //     return id;
+    // },
+
     create: async(user) => {
-        const {username, email, first_name, last_name, hash} = user;
-        const id = await db('users').insert({
-            username: username,
-            email: email,
-            first_name: first_name,
-            last_name: last_name}, ['id']);
-        const _ = await db('hashpwd').insert({
-            username: username, 
-            password: hash}); 
-        return id;
+        try{
+            db.transaction(
+                async function(trx) {
+                    const {username, email, first_name, last_name, hash} = user;
+                    const id = await db('users').insert({
+                        username: username,
+                        email: email,
+                        first_name: first_name,
+                        last_name: last_name}, ['id']
+                    );
+                    await db('hashpwd').insert({
+                        username: username, 
+                        password: hash}); 
+                    return id;
+                })
+        }
+        catch(err){
+            console.log(err);
+        }
     },
 
     update: async(id, info) => {
