@@ -1,0 +1,21 @@
+{
+    "tasks": [
+        {
+            "id": "225baf72-cd78-4d2c-af31-d074fdb1f8b6",
+            "title": "task1",
+            "completed": true
+        },
+
+        {
+            "id": "0399bdae-6d1c-426f-ba33-8e5f16069189",
+            "title": "task 2",
+            "completed": false
+        },
+
+        {
+            "id": "f8256674-0129-49c1-a552-edadf107a4da",
+            "title": "task 3",
+            "completed": false
+        }
+    ]
+}
