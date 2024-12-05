@@ -32,6 +32,6 @@ function areAnagrams(s1, s2){
     return compareCounts(countLetters(s1.toLowerCase()), countLetters(s2.toLowerCase()));
 }
 
-areAnagrams('astronomer', 'moon starer');
-areAnagrams("School master", "The classroom");
-areAnagrams("The Morse Code", "Here come dots");
+console.log(areAnagrams('astronomer', 'moon starer'));
+console.log(areAnagrams("School master", "The classroom"));
+console.log(areAnagrams("The Morse Code", "Here come dots"));
