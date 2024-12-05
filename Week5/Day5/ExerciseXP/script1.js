@@ -60,7 +60,7 @@ document.getElementById('filter').onkeyup = function(e){
     else {
         for(const item of items){
             const p = item.querySelector('p');
-            item.style.display = p.textContent.toLowerCase().includes(e.target.value) ? 'block' : 'none';
+            item.style.display = p.textContent.toLowerCase().includes(e.target.value.toLowerCase()) ? 'block' : 'none';
         }
     }
 
