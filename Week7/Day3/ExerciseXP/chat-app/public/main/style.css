@@ -1,0 +1,24 @@
+#container {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    width: 100%;
+}
+
+#list {
+    width: 30%;
+    background-color: darkviolet;
+}
+
+#msg {
+    width: 70%;
+}
+
+.list-item {
+    border: 1px solid black;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 90%;
+    margin-left: 5%;
+}
