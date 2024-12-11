@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "mocha",
+    "test": "mocha --exit",
+    "int": "mocha  -- --grep \"integrational test\" --exit",
+    "testdb": "mocha  -- --grep \"testdb\" --exit",
     "reset": "npx knex migrate:down && npx knex migrate:up && npx knex seed:run"
   },
   "keywords": [],
@@ -11,6 +13,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "assert": "^2.1.0",
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.7",
     "express": "^4.21.1",

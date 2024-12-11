@@ -1,7 +1,5 @@
 const { returning } = require('../db/db');
 const {hash, compare} = require('../hashing');
-// const db = require('../db/db');
-// const {faker} = require('')
 
 const addMessage = chatId => (sender, message) => db('messages').insert({
         chat: chatId,
@@ -17,7 +15,7 @@ exports.seed = async function(db){
 
     console.log(`user1: ${user1}`)
 
-    let [{id: chatid}] = await db('chats').insert({isDirect: true},['id']);
+    let [{id: chatid}] = await db('chats').insert({isDirect: true, name:'user1-user2'},['id']);
     console.log(`chatid: ${chatid}`);
 
     await db('members').insert({chat: chatid, user: user1}); 
@@ -26,7 +24,7 @@ exports.seed = async function(db){
     const dmAdder = addMessage(chatid);
     await dmAdder(user1, 'hey, dude');
     await dmAdder(user2, "hey, what's up");
-    await dmAdder(user3, 'hey, dude');
+    await dmAdder(user1, 'great');
 
 
     let [{id: groupid}] = await db('chats').insert({isDirect: false, name: 'dudes'}, ['id']);

@@ -5,7 +5,7 @@ exports.up = async function() {
         table.increments('id').primary();
         table.string('username').unique().notNullable();
         table.string('hash').notNullable();
-        table.timestamp('creation_date').defaultTo(db.fn.now());
+        table.timestamp('creation_time').defaultTo(db.fn.now());
     });
 
     await db.schema.createTable('chats', (table) => {
@@ -15,10 +15,19 @@ exports.up = async function() {
         table.timestamp('creation_time').defaultTo(db.fn.now());
     })
 
+    // await db.schema.createTable('chatnames', (table) => {
+    //     table.increments('id').primary();
+    //     table.uuid('chatId').notNullable();
+    //     table.string('name').notNullable();
+
+    // })
+
     await db.schema.createTable('members', (table) => {
         table.uuid('id').primary().defaultTo(db.fn.uuid());
         table.uuid('chat');
-        table.integer('user');
+        table.increments('user');
+        table.boolean('isAdmin').defaultTo(false);
+        table.timestamp('creation_time').defaultTo(db.fn.now());
         table
             .foreign('user')
             .references('id')
@@ -32,7 +41,7 @@ exports.up = async function() {
     })
 
     await db.schema.createTable('messages', (table) => {
-        table.uuid('id').primary().defaultTo(db.fn.uuid());
+        table.uuid('id').unique().primary().defaultTo(db.fn.uuid());
         table.uuid('chat');
         table.integer('sender');
         table.string('message').notNullable();
@@ -58,6 +67,4 @@ exports.down = async function() {
         console.log(name)
         await db.schema.dropTableIfExists(name);
     }
-
-    
 }
