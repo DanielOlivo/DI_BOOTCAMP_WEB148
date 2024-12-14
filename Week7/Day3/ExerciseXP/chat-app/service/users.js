@@ -12,7 +12,12 @@ module.exports = userService = {
     // user management
     userExists: async username => {
         const [{count}] = await db('users').count('username').where('username', username);
-        return count == 1;
+        return Number(count) == 1;
+    },
+
+    fetchId: async (username) => {
+        const {id} = await db('users').where('username', username).select('id').first()
+        return id;
     },
 
     createUser: async (username, hash) => {
@@ -34,6 +39,11 @@ module.exports = userService = {
             .whereIn('id', userIds)
             .del(['id', 'username']);
         return result;
+    },
+
+    getHash: async (username) => {
+        const {hash} = await db('users').where('username', username).select('hash').first()
+        return hash;
     },
 
     checkUserInChat: async (userId, chatid) => {
@@ -66,11 +76,19 @@ module.exports = userService = {
         return result;
     },
 
+    getChatsByUsername: async (username) => 
+        await db('chats')
+            .join('members', 'chats.id', '=', 'members.chat')
+            .join('users', 'members.user', '=', 'users.id')
+            .where('users.username', username)
+            .select('chats.name', 'chats.id'),
+
     getChats: async (userId) => {
-        return await db('members')
+        const result = await db('members')
             .join('chats', 'members.chat', '=', 'chats.id')
             .where('members.user', userId)
             .select('chats.name', 'chats.id')
+        return result;
     },
 
     createDM: async () => {
