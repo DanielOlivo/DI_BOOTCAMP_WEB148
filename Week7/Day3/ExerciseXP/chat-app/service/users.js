@@ -1,6 +1,7 @@
 const db = require('../db/db');
 const queries = require('./queries');
-const assert = require('node:assert').strict;
+// const assert = require('node:assert').strict;
+const {ok, isNum} = require('../tests/utils')
 
 module.exports = userService = {
 
@@ -12,6 +13,16 @@ module.exports = userService = {
     // user management
     userExists: async username => {
         const [{count}] = await db('users').count('username').where('username', username);
+        return Number(count) == 1;
+    },
+
+    /**
+     * check if user exists
+     * @param {number} id 
+     * @returns {boolean}
+     */
+    userIdExists: async id => {
+        const [{count}] = await db('users').count('id').where('id', id);
         return Number(count) == 1;
     },
 
@@ -40,6 +51,8 @@ module.exports = userService = {
             .del(['id', 'username']);
         return result;
     },
+
+    findUser: async(str) => await db('users').whereLike('username', '%' + str + '%').select('id', 'username'),
 
     getHash: async (username) => {
         const {hash} = await db('users').where('username', username).select('hash').first()
@@ -84,6 +97,7 @@ module.exports = userService = {
             .select('chats.name', 'chats.id'),
 
     getChats: async (userId) => {
+        isNum(userId)
         const result = await db('members')
             .join('chats', 'members.chat', '=', 'chats.id')
             .where('members.user', userId)
@@ -91,11 +105,49 @@ module.exports = userService = {
         return result;
     },
 
+    getDMs: async(userId) => await db('members')
+        .join('chats', 'chats.id', '=', 'members.chat')
+        .where('members.user', userId)
+        .andWhere('chats.isDirect', true)
+        .select('chats.id'),
+
+    /**
+     * 
+     * @param {number} userId1 
+     * @param {number} userId2 
+     * @returns 
+     */
+    getDM: async(userId1, userId2) => {
+        isNum(userId1)
+        isNum(userId2)
+        const result = await db.select('a AS id').fromRaw(`
+            (
+                select chats.id as a from chats
+                inner join members on chats.id = members.chat
+                where (members.user = ? and "isDirect"=TRUE))
+            inner join (
+                select chats.id as b from chats 
+                inner join members on chats.id = members.chat 
+                where (members.user = ? and "isDirect"=TRUE))
+            on a = b  
+            `, [userId1, userId2])
+        return result;
+    },
+
+    /**
+     * creates new DM
+     * @returns {number} id - id of the dm chat
+     */
     createDM: async () => {
         const [result] = await db('chats').insert({isDirect: true}, ['id']);
         return result;
     },
 
+    /**
+     * 
+     * @param {string} name 
+     * @returns {ChatInfo} info
+     */
     createChat: async(name) => {
         const [result] = 
             await db('chats')
@@ -105,14 +157,23 @@ module.exports = userService = {
         return result;
     },
 
-    // findChatByName: async(name) => {
-    //     throw new Error();
-    // },
+    getGroupAdmins: async(chatId) => {
+        const result = await db('members')
+            .join('chats', 'members.chat', 'chats.id')
+            .where('chats.id', chatId)
+            .andWhere('members.isAdmin', true)
+            .select('members.user');
+        return result
+    },
 
-    // findChatByUserAndChatname: async(username, chatName) => {
-    //     throw new Error()
-    // },
 
+    /**
+     * 
+     * @param {number} userId - id of the member
+     * @param {UUID} chatId - id of the chat
+     * @param {boolean} isAdmin 
+     * @returns {Member} member object
+     */
     addMember: async(userId, chatId, isAdmin=false) => {
         const [result] = 
             await db('members')
@@ -145,6 +206,15 @@ module.exports = userService = {
             .andWhere('chat', chatId)
             .del(['user', 'chat']);
         return result;
+    },
+
+    isMember: async( userId, chatId) => {
+        const [{count}] = await db('members')
+            .join('chats', 'members.chat', 'chats.id')
+            .count('user')
+            .where('chats.id', chatId)
+            .andWhere('members.user', userId);
+        return count == 1;
     },
 
     removeMembers: async (userIds, chatId) => 

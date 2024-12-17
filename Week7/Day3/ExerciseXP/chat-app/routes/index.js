@@ -4,15 +4,15 @@ const userController = require('../controller/userController');
 const router = express.Router();
 router.use(express.json());
 
-router.route('/')
-    .get(userController.getMainPage);
+// router.route('/')
+//     .get(userController.getMainPage);
 
 router.route('/register')
-    .get(userController.getRegistrationPage)
+    // .get(userController.getRegistrationPage)
     .post(userController.createUser);
 
 router.route('/login')
     .get(userController.getLoginPage)
-    // .post(userController);
+    .post(userController.login);
 
 module.exports = router;

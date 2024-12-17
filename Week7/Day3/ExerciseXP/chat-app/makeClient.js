@@ -1,88 +1,156 @@
+const { setTimeout } = require('node:timers/promises');
+
 const assert = require('node:assert').strict;
 
 module.exports = class SocketClient{
     constructor(socket, username){
         this.socket = socket;
+        this.id = new Ref(undefined);
         this.msgRef = new Ref(undefined);
         this.chats = new Ref(undefined);
         this.username = username;
 
-        socket.on('msg', ({sender, chatId, msg}) => {
-            // console.log('client: receiving msg');
-            this.msgRef.update({sender: sender, chatId: chatId, msg: msg});
+        socket.on('dm', (msg) => {
+            console.log('client: dm');
+            this.msgRef.update({msg: msg});
         })
 
-        socket.on('')
+        // socket.on('')
+    }
+
+    async fetchId(){
+        assert.ok(this.socket);
+        const result = await this.id.waitUpdateWith(() => {
+            this.socket.emit('fetch_id', this.username, '', (data) => {
+                this.id.update(data)
+            })
+        })
+        return result;
     }
 
     async fetchChats(){
-        // assert.ok(this.socket.connected)
         const result = await this.chats.waitUpdateWith(() => {
-            // console.log('emitting');
             this.socket.emit('fetch_chats', '', '', (chats) => {
-                this.chats.update(Object.fromEntries(
-                    chats.map(({id, name}) => [name, id])
-                ));
+                this.chats.update(chats);
             })}
         )
-        // console.log(result)
         return result;
     }
 
-    async fetchDirectFrom(sender, chatName, msg){
-        assert.ok(sender)
-        assert.ok(sender.socket);
-        assert.ok(chatName);
-        assert.ok(msg)
-        const result = await this.msgRef.waitUpdateWith(() => {
-            sender.socket.emit('msg', {
-                username: sender.username, 
-                chatId: this.chats.info[chatName], 
-                msg: msg
+    async fetchDirectFrom(sender, msg){
+        assert.notEqual(sender.username, this.username);
+        assert.ok(sender, 'sender undefined');
+        assert.ok(this.id, 'recipient undefined');
+
+        const response = new Ref();
+        const getResponse = () => response.waitUpdateWith(() => {
+            // console.log('wait for 100ms...');
+            // console.log('emitting')
+            sender.socket.emit('dm',{sender: sender.id.info, recipient: this.id.info}, msg, (success) => {
+                // console.log('success')
+                response.update(success);
+        })})
+
+        const getMsg = () => this.msgRef.waitUpdateWith(async () => 
+            // console.log('socket.on(msg)...')
+            {}
+        )
+
+        // console.log('running total...')
+        const total = await Promise.all([
+            getResponse(), 
+            getMsg(),
+        ]);
+        // console.log('total: ', total)
+
+        return total;
+    }
+
+    // async fetchDirectFrom(sender, msg){
+    //     return new Promise((res, rej) => {
+    //         sender.socket.emit('dm', {sender: sender.id, })
+    //     })
+    // }
+
+    async fetchMessages(chatId){
+        throw new Error();
+    }
+
+    async fetchMessage(chatId, msg){
+        throw new Error();
+    }
+
+    async findUser(username){
+        const list = new Ref();
+        const result = await list.waitUpdateWith(() => {
+            this.socket.emit('find_user', username, '', (data) => {
+                list.update(data)
             })
-            // console.log('emitted')
-        }) 
+        })
         return result;
     }
 
-    async fetchNewChat(chatName){
-        
+    async createChat(chatName){
+        throw new Error();
     }
+
+    // async fetchNewChat(chatName){
+        
+    // }
 
 }
 
 
 class Ref {
-    constructor(info){
+    constructor(info = undefined){
         this.info = info;
         this.promiseResolver;
+        this.rejectId;
     }
 
     update (newInfo) {
         this.info = newInfo;
         if(this.promiseResolver){
+            if(this.rejectId){
+                clearTimeout(this.rejectId);
+            }
             this.promiseResolver(newInfo);
             this.promiseResolver = undefined;
         }
     }
 
     waitUpdateWith(fn) {
-        const promise = new Promise(resolve => {
-            this.promiseResolver = resolve;
+        const promise = new Promise((resolve, reject) => {
+            try{
+                this.promiseResolver = resolve;
+                this.rejectId = setTimeout(() => reject('timeout'), 2000);
+                fn()
+            } 
+            catch(err){
+                reject(err)
+            }
         })
         // console.log('promise created')
-        fn()
         return promise;
     }
 }
 
+function wait(ms){
+    return new Promise(resolve => {
+        console.log('running timeout');
+        setTimeout(() => {
+            console.log('timeout now');
+            resolve(ms)
+        }, ms)
+    });
+}
 
 function fetch_chats(socket){
     return new Promise((resolve, reject) =>{
         // const timer = setTimeout(() => reject(new Error('fetch_chats: fail')), 6000);
         setTimeout(() =>
             socket.emit('fetch_chats', '', '', async chats => {
-                console.log('chats: ');
+                // console.log('chats: ');
                 // chats.forEach(o => console.log(o.id));
                 const result = await Promise.all(chats.map(async ({id}) => {
                     const latest_time = new Date().toLocaleString()

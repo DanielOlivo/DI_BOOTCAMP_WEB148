@@ -77,6 +77,14 @@ describe('testdb', () => {
         assert.equal(messages.length, 1);
     })
 
+    it("getDM", async() => {
+        const result = await userService.getDM(userId1, userId2);
+        assert.isOk(result)
+        const [{id}] = result;
+        assert.isOk(id);
+        assert.equal(id, dm1);
+    })
+
     it("dude2 responds to dude1", async() => {
         const {message, chat} = await userService.addMessage(userId2, dm1, 'hey, man');
         assert.equal(message, 'hey, man')

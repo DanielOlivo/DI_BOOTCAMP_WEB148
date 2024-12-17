@@ -3,10 +3,16 @@ const {Server} = require('socket.io');
 const {createServer} = require('node:http');
 const verify = require('./verification');
 const userController = require('./controller/userController');
-const assert = require('assert')
 
+// const assert = require('assert')
+// const {assert} = require('chai')
+const {isNum, ok, notOk, eq, isTrue, isStr, isUUID} = require('./tests/utils')
+
+
+const online = require('./onlineManager');
 
 const server = createServer(app);
+// server.use('/', router)
 
 const io = new Server(server, {
     connectionStateRecovery: {}
@@ -16,89 +22,143 @@ io.use(verify);
 
 io.on("connection", async (socket) => {
 
-    console.log('connection: ' + socket.id);
+    // assert.ok(socket.user)
+    // console.log('connection: ' + socket.id);
 
-    await addUserToChannels(socket);
+    // await addUserToChannels(socket);
 
-    socket.on("msg", async ({username, chatId, msg}) => {
-        // console.log('server: msg')
-        // assert.ok(chatId || username);
-        // assert.ok(!(chatId && username));
-        assert.ok(msg);
-        assert.ok(username);
-        assert.ok(chatId);
+    socket.on("dm", async ({sender, recipient}, msg, callback) => {
 
-        const inChat = await userController.userInChat(socket.user, chatId);
-        // console.log('inChat', inChat);        
+        console.log('server: on dm');
+        isNum(sender);
+        isNum(recipient);
+        isStr(msg);
+        console.log('server: on dm');
 
-        if(!inChat){
-            throw new Error('sender is not chat');
-        }
+        // console.log('server: dm')
+        await userController.handleDM(sender, recipient, msg, async ({data, err}) => {
 
-        console.log(socket.rooms.values())
-         
-        // await userController.addMessage(chatId, username, msg);        
-        io.to(chatId).emit('msg', {chatId: chatId, sender: socket.user, msg: msg});
+            if(err){
+                await callback({success: false});
+                return;
+            }
 
-    })    
+            callback({success: true})
 
-    socket.on('create_chat', async(name, arg2, callback) => {
-        assert.ok(name, 'absent of name');
-        const info = await userController.createChat(socket.user, name);
-        callback(info);
-    })
+            ok(online);
+            ok(online.userIds);
+            isTrue(recipient in online.userIds);
 
-    socket.on('remove_chat', async(chatId, arg2, callback) => {
-        assert.ok(chatId);
-        const users = userController.getMembers(chatId);
-        assert.ok(users.length > 0);
-        io.to(chatId).emit('chat_removed', {chatId: chatId});
-        await removeChat(chatId); 
-        callback(true)
-    })
+            const {chat: chatId} = data;
+            ok(chatId);
 
-    socket.on('add_user', async(chatId, userId, callback) => {
-        assert.ok(chatId)
-        assert.ok(userId)
-        assert.ok(chatName)
-        await userController.addUserToChat(userId, chatId);
-        io.to(userId).emit('added_to', {chatId: chatId, name: chatName});
-    })
+            console.log("server: emitting...")
+            io.to(online.userIds[sender].socketId).emit('dm', {msg: msg, chatId: chatId, name: online.userIds[recipient].username, sender: sender});
+            io.to(online.userIds[recipient].socketId).emit('dm', {msg: msg, chatId: chatId, name: online.userIds[recipient].username, sender: sender});
+            // io.to(online.userIds[recipient].socketId).emit('dm', msg);
+        })
+    });   
 
-    socket.on('remove_user', async(chatId, userId, callback) => {
-        assert.ok(chatId);
-        assert.ok(userId);
-        assert.ok(callback)
+    socket.on("gm", async({sender, chatId}, msg, callback) => {
+        isNum(sender)
+        isNum(chatId)
+        isStr(msg)
 
-        await userController.removeUserFromChat(chatId, chatId); 
+        await userController.handleGroupMessage(sender, chatId, msg, ({data, err}) => {
+            ok(data)
+            notOk(err)
+            
+        })
 
-        io.to(userId).emit('removed', {chatId: chatId});
+        throw new Error();
     });
+
+
+    socket.on('create_chat', async(userId, name, callback) => {
+        isNum(userId);
+        isStr(name);
+        await userController.createChat(userId, name, ({data, err}) => {
+            throw new Error();
+            callback(data);
+        });
+    })
+
+    socket.on('remove_chat', async(userId, chatId, callback) => {
+        isNum(userId);
+        isUUID(chatId);
+        await userController.handleGroupRemove(userId, chatId, ({data, err}) => {
+            ok(data);
+            notOk(err);
+            throw new Error();
+        })
+    })
+
+    socket.on('am', async({adminId, chatId}, memberId, callback) => {
+        isUUID(chatId);
+        isNum(adminId);
+        isNum(memberId);
+        await userController.handleNewMember(adminId, memberId, chatId, ({data, err}) => {
+            throw new Error();
+        });
+    })
+
+    socket.on('rm', async({adminId, chatId}, memberId, callback) => {
+        isUUID(chatId)
+        isNum(adminId)
+        isNum(memberId)
+        await userController.handleLeaving(memberId, chatId, ({data, err}) => {
+            throw new Error();
+        })
+    });
+
+    socket.on('leave', async(chatId, memberId, callback) => {
+        isUUID(chatId)
+        isNum(memberId)
+        throw new Error();
+    })
 
     socket.on('find_user', async (userInput, arg2, callback) => {
-        assert.ok(userInput);
-        assert.ok(callback);
 
-        const users = userController.findUsersBy(userInput);
-        assert.ok(users)
-        callback(users);
+        await userController.handleUserSearch(online.users[socket.id], userInput, (data) => {
+            callback(data);
+        });
     });
 
-    socket.on('fetch_chats', async (a1, a2, callback) => {
-        // console.log('server: fetching_chats');
-        assert.ok(userController.getChats)
-        const chats = await userController.getChats(socket.user);
-        assert.ok(chats)
-        callback(chats);
+    socket.on('fetch_id', async (username, a2, callback) => {
+        await userController.fetchId(username, data => {
+            callback(data)
+        });
     })
 
-    socket.on('fetch_msg', async (chatId, latest_time, callback) => {
-        assert.ok(chatId);
-        assert.ok(latest_time);
-        const messages = await userController.getLastMessages(chatId, latest_time);
-        callback(messages);
+    socket.on('fetch_chats', async (a1, a2, callback) => {
+        try {
+            const userId = online.users[socket.id].id; 
+            isNum(userId);
+            await userController.fetchChats(userId, ({chats, err}) => {
+                ok(chats)
+                notOk(err)
+                callback(chats);
+            });
+        }
+        catch(err){
+            callback(undefined, {error:String(err)});
+        }
+    })
+
+    socket.on('fetch_msg', async ({userId, chatId}, latest_time, callback) => {
+        isNum(userId);
+        isUUID(chatId);        
+        ok(latest_time);
+
+        throw new Error();
     })
 })
+
+function checkSocketAndRooms(socket, chatId){
+    if(socket.rooms.indexOf(chatId) <= 0){
+        socket.join(chatId) 
+    }
+}
 
 async function addUserToChannels(socket){
     const ids = await userController.getAllChats(socket.user);
@@ -107,6 +167,8 @@ async function addUserToChannels(socket){
         // console.log(`${socket.user} in chat: ${chatId}`)
     }
 }
+
+
 
 module.exports.io = io;
 module.exports.server = server;
