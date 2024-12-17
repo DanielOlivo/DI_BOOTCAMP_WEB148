@@ -11,7 +11,7 @@ module.exports = class SocketClient{
         this.username = username;
 
         socket.on('dm', (msg) => {
-            console.log('client: dm');
+            // console.log('client: dm');
             this.msgRef.update({msg: msg});
         })
 
@@ -56,9 +56,12 @@ module.exports = class SocketClient{
             {}
         )
 
+        const getMsg2 = () => sender.msgRef.waitUpdateWith(async() => {});
+
         // console.log('running total...')
         const total = await Promise.all([
             getResponse(), 
+            getMsg2(),
             getMsg(),
         ]);
         // console.log('total: ', total)

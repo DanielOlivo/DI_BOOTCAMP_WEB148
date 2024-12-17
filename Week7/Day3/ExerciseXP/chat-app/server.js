@@ -29,11 +29,11 @@ io.on("connection", async (socket) => {
 
     socket.on("dm", async ({sender, recipient}, msg, callback) => {
 
-        console.log('server: on dm');
+        // console.log('server: on dm');
         isNum(sender);
         isNum(recipient);
         isStr(msg);
-        console.log('server: on dm');
+        // console.log('server: on dm');
 
         // console.log('server: dm')
         await userController.handleDM(sender, recipient, msg, async ({data, err}) => {
@@ -52,9 +52,9 @@ io.on("connection", async (socket) => {
             const {chat: chatId} = data;
             ok(chatId);
 
-            console.log("server: emitting...")
+            // console.log("server: emitting...")
             io.to(online.userIds[sender].socketId).emit('dm', {msg: msg, chatId: chatId, name: online.userIds[recipient].username, sender: sender});
-            io.to(online.userIds[recipient].socketId).emit('dm', {msg: msg, chatId: chatId, name: online.userIds[recipient].username, sender: sender});
+            io.to(online.userIds[recipient].socketId).emit('dm', {msg: msg, chatId: chatId, name: online.userIds[sender].username, sender: sender});
             // io.to(online.userIds[recipient].socketId).emit('dm', msg);
         })
     });   

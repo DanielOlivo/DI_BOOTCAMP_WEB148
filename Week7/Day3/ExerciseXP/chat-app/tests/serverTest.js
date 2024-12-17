@@ -113,30 +113,63 @@ describe('server_test', () => {
         assert.equal(id, user2.id.info);
     });
 
-    // it('wait test', async() => {
-    //     await wait(3000);
-    //     assert.isTrue(true);
-    // })
-
     it('user1 sends dm to user2', async() => {
         const result = await user2.fetchDirectFrom(user1, 'hey, dude');
         assert.isOk(result)
-
+        // console.log(result)
         const [
             {success},
-            {msg: {msg, chatId, name, sender}}
+            data1,
+            data2
         ] = result;
 
         assert.isTrue(success)
-        assert.isOk(chatId)
-        assert.equal(name, 'dude 2');
-        assert.equal(sender, user1.id.info);
+
+        {
+            const {msg: {msg, chatId, name, sender}} = data1;
+            assert.isTrue(success)
+            assert.isOk(chatId)
+            assert.equal(name, 'dude 2');
+            assert.equal(sender, user1.id.info);
+        }
+        {
+            const {msg: {msg, chatId, name, sender}} = data2;
+            assert.isTrue(success)
+            assert.isOk(chatId)
+            assert.equal(name, 'dude 1');
+            assert.equal(sender, user1.id.info);
+        }
     });
 
-    // it('user2 responds to user1', async() => {
-    //     const message = await user1.fetchDirectFrom(user2, "hi, what's up?");
-    //     assert.isOk(message);
-    // })
+    it('user2 responds to user1', async() => {
+        const result = await user1.fetchDirectFrom(user2, 'hi');
+        assert.isOk(result)
+        // console.log(result)
+        const [
+            {success},
+            data1,
+            data2
+        ] = result;
+
+        assert.isTrue(success)
+
+        {
+            const {msg: {msg, chatId, name, sender}} = data1;
+            assert.isTrue(success)
+            assert.isOk(chatId)
+            assert.equal(name, 'dude 1');
+            assert.equal(sender, user2.id.info);
+            assert.equal(msg, 'hi')
+        }
+        {
+            const {msg: {msg, chatId, name, sender}} = data2;
+            assert.isTrue(success)
+            assert.isOk(chatId)
+            assert.equal(name, 'dude 2');
+            assert.equal(sender, user2.id.info);
+            assert.equal(msg, 'hi')
+        }
+    })
 
     // it('user2 creates chat "dudes"', async() => {
     //     const {id, name} = await user2.createChat('dudes');

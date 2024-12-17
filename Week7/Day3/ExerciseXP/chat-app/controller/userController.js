@@ -101,18 +101,18 @@ module.exports = userController = {
                 await callback({err: 'forbidden'});
                 return;
             }
-            console.log('both exist');
+            // console.log('both exist');
 
             let dmId;
             const dms = await userService.getDM(senderId, recepientId);
             if(dms.length == 0){
-                console.log('creating dm...');
+                // console.log('creating dm...');
                 ({id: dmId} = await userService.createDM());
                 await userService.addMember(senderId, dmId);
                 await userService.addMember(recepientId, dmId);
             }
             else{
-                console.log('getting dm...')
+                // console.log('getting dm...')
                 ({id: dmId} = dms[0]);
             }
 
