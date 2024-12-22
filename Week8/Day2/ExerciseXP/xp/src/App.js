@@ -1,13 +1,17 @@
 import logo from './logo.svg';
 import './App.css';
 import Car from './Components/Car'
+import Events from './Components/Events';
 
 const carinfo = {name: "Ford", model: "Mustang"};
 
 function App() {
 
   return (
-    <Car />
+    <div>
+      <Car />
+      <Events />
+    </div>
   );
 
   // return (
