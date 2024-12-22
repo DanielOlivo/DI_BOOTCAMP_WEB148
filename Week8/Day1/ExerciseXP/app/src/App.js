@@ -2,6 +2,7 @@ import logo from './logo.svg';
 import './App.css';
 import ReactDom from 'react-dom';
 import UserFavoriteAnimals from './UserFavoriteAnimals';
+import Exercise from './Exercise3';
 
 
 // exercise 1
@@ -31,6 +32,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
+        <Exercise />
         {/* <img src={logo} className="App-logo" alt="logo" /> */}
         {/* <p>
           Edit <code>src/App.js</code> and save to reload.
