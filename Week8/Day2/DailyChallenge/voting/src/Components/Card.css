@@ -1,0 +1,16 @@
+.card {
+    background-color: grey;
+    padding: 10px;
+    margin-bottom: 5px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    
+    min-width: 200px;
+}
+
+.lang {
+    color: black;
+}
