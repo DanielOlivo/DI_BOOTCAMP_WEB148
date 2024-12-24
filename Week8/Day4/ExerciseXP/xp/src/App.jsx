@@ -4,6 +4,7 @@ import viteLogo from '/vite.svg'
 import { BrowserRouter, Routes, Route, NavLink, Link } from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import ErrorBoundary from './Components/ErrorBoundary'
+import PostList from './Components/PostList'
 
 // import './App.css'
 
@@ -53,6 +54,8 @@ function App() {
           <Route path="/profile" element={<ErrorBoundary><Profile /></ErrorBoundary>} />
           <Route path="/Shop" element={<ErrorBoundary><Shop /></ErrorBoundary>} />
         </Routes>
+
+      <PostList />
     </div>
   )
 }
