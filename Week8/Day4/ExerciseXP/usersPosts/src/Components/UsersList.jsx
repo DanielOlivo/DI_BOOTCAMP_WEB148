@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "axios";
+import Label from "./Label";
 
 class UsersList extends React.Component {
 
@@ -25,11 +26,17 @@ class UsersList extends React.Component {
             <>
                 <h1>List of posts</h1>
                 {this.state.loaded ? <></> : <div>Loading...</div>}
-                <ul>
-                    {this.state.users.map(({name, email}) => 
-                        <li>{name} | {email}</li> 
+                <div>
+                    {this.state.users.map(({id, name, username, email, address: {city}}) => 
+                        <div>
+                            <Label label='id'>{id}</Label>
+                            <Label label='name'>{name}</Label>
+                            <Label label='username'>{username}</Label>
+                            <Label label='email'>{email}</Label>
+                            <Label label='city'>{city}</Label>
+                        </div>
                     )} 
-                </ul>
+                </div>
             </>
         )
     }

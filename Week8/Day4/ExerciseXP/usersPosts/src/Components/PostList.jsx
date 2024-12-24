@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "axios";
+import Label from "./Label";
 
 class PostList extends React.Component {
 
@@ -23,12 +24,17 @@ class PostList extends React.Component {
 
     render(){
         return (
-            <>
+            <div>
                 <h1>List of posts</h1>
-                {this.state.posts.map(({title}) => 
-                    <p>{title}</p> 
+                {this.state.posts.map(({userId, id, title, body}) => 
+                    <div>
+                        <Label label='userId'>{userId}</Label>
+                        <Label label='id'>{id}</Label>
+                        <Label label='title'>{title}</Label>
+                        <Label label='body'>{body}</Label>
+                    </div>
                 )} 
-            </>
+            </div>
         )
     }
 
