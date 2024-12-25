@@ -1,35 +1,70 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from 'react'
+// import './App.css'
+import big from './assets/big.webp'
+import small from './assets/small.jpeg'
+import { createClient } from 'pexels';
 
-function App() {
-  const [count, setCount] = useState(0)
+const key = "7J7rPk0KzN5N6eiDP5LMXNXRSg0IYG4pFrSXiDIdqSh6ZsKDDqcOTZk2";
+const client = createClient(key)
+
+async function loadImages(word, fn){
+  try {
+    const photos = await client.photos.search({query: word, per_page: 20}) 
+    console.log('photos', photos.photos);
+    fn(photos.photos)
+  }
+  catch(err){
+    console.log('ERR', err)
+  }
+}
+
+export default function App() {
+  const [imgs, setImgs] = useState([]);
+  const [word, setWord] = useState('Nature');
+  const [header, setHeader] = useState('')
+
+  const handlePhotos = (photos) => {
+      setImgs(photos.map(ph => ph.src.medium))
+      setHeader(word);
+  }
+
+  const getNext = () => Math.random() > 0.5 ? big : small;
+
+  const handleClick = (e) => loadImages(word, handlePhotos)
+
+  const handleChange = (e) => setWord(e.target.value)
+
+  useEffect(() => {
+    // setImgs(Array.from({length: 20}, (_) => getNext()))
+    loadImages('Nature', handlePhotos)
+  }, [])
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <div className='container'>
+        <h1 className='logo'>Snapshot</h1>
+        <div className='search'>
+          <input type='text' onChange={handleChange} />
+          <button onClick={handleClick}>Search</button>
+        </div>
+        <div className="tags">
+          {['Nature', 'Mountain', 'Sea', 'Moon'].map(w => (
+            <button onClick={() => loadImages(w, handlePhotos)}>{w}</button>
+          ))}
+        </div>
+        <div id='result'>
+          <h1>{header} pictures</h1>
+          <div id='grid'>
+            {imgs.map((src) => (
+              <div className='holder'>
+                <img src={src} />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      {/* <Scroll /> */}
     </>
   )
 }
 
-export default App
