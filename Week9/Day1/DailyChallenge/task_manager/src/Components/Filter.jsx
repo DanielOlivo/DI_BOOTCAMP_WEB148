@@ -6,9 +6,9 @@ export default function Filter(){
     const filter = useContext(FilterContext)
 
     return (
-        <div className='filter'>
-            <p>{JSON.stringify(filter)}</p>
-            <div>
+        <div className='flex flex-row'>
+            {/* <p>{JSON.stringify(filter)}</p> */}
+            <div className="px-6">
                 <input 
                     type='checkbox' 
                     onChange={filter.toggleActive} 

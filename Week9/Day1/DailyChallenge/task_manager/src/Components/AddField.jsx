@@ -18,6 +18,8 @@ export default function AddField(props){
 
     return (
         <input 
+            className="max-w-full border-gray-200 border-2"
+
             placeholder="type a task"
             value={val}
             onChange={handleChange}

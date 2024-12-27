@@ -1,5 +1,4 @@
 import { useRef, useState, createContext, useReducer } from 'react';
-import DblClickField from './Components/DblClickField';
 import {FilterContextProvider} from './FilterContext';
 import Filter from './Components/Filter';
 import Item from './Components/Item';
@@ -36,8 +35,19 @@ function taskReducer(state, action){
 
 const TaskContext = createContext();
 
+const initState = [
+    {
+        value: 'first task',
+        check: true
+    },
+    {
+        value: 'second one',
+        check: false
+    }
+]
+
 function TaskManager(){
-    const [todos, dispatch] = useReducer(taskReducer, []);
+    const [todos, dispatch] = useReducer(taskReducer, initState);
     const ulRef = useRef()
 
     const add = (e) => {
@@ -46,7 +56,8 @@ function TaskManager(){
     }
 
     return (
-        <div>
+        <div className='flex-col justify-start items-center'>
+            <h2 className='text-6xl font-bold my-10'>Task Manager</h2>
             <TaskContext.Provider value={{todos, dispatch}}>
                 {/* <button onClick={add}>addNew</button> */}
                 <AddField />
@@ -59,7 +70,7 @@ function TaskManager(){
                     </ul>
                 </FilterContextProvider>
             </TaskContext.Provider>
-            <p>{todos.map(JSON.stringify)}</p>
+            {/* <p>{todos.map(JSON.stringify)}</p> */}
         </div>
     )
 }
