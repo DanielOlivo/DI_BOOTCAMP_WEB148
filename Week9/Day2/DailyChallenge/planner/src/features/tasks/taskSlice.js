@@ -20,9 +20,10 @@ export const taskSlice = createSlice({
     initialState: initialState,
     reducers: {
         add: (state, action) => {
-            const {title, details} = action.payload;
-            state.all.push({title, details, date: now(), isDone: false, id: nanoid()})
-            state.selected = state.all.filter(({date}) => year == date.year && month == date.month && date == date.date);
+            const {title, details, date} = action.payload;
+            state.all.push({title, details, date, isDone: false, id: nanoid()})
+            state.selected = state.all.filter(({date: dt}) => 
+                date.year == dt.year && date.month == dt.month && date.date == dt.date);
         },
         edit: (state, action) => {
             const {title, details, id, date} = action.payload
@@ -47,7 +48,7 @@ export const taskSlice = createSlice({
                 year == item.date.year 
                 && month == item.date.month 
                 && date == item.date.date);
-            // console.log('selected', state.all, state.selected)
+            console.log('selected', state.selected)
         }
     }
 })

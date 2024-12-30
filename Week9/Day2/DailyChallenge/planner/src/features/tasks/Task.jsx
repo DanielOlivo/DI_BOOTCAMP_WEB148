@@ -11,68 +11,66 @@ export default function Task(props){
 
     const [onEdit, setOnEdit] = useState(false);
 
-    const Box = (task) => {
-        const {title, details} = task
-        return (
+    const handleEdit = (e) => {
+        e.preventDefault()
+        const title = titleRef.current.value;
+        const details = detailsRef.current.value;
+        const data = {...props.task, title, details}
+        // dispatch(edit(data));
+    }
+
+    return (
+        <div
+            className='border-2  rounded flex flex-col max-w-full' 
+            onDoubleClick={(e) => setOnEdit(true)}
+            draggable={!onEdit}
+            onDragStart={(e) => {
+                e.dataTransfer.setData('text/plain', JSON.stringify(props.task))
+            }}
+            onDrop={(e) => {
+                e.preventDefault();
+            }}
+        >
+
             <div
-                className='border-2 rounded border-gray-200'  
-                onDoubleClick={(e) => setOnEdit(true)}
-                draggable='true'
-                onDragStart={(e) => {
-                    e.dataTransfer.setData('text/plain', JSON.stringify(task))
-                    console.log(e.dataTransfer);
-                }}
-                onDrop={(e) => {
-                    e.preventDefault();
-                    console.log('onDrop')
-                }}
+                className="flex flex-row justify-between items-start " 
             >
-                <h2
-                    className='text-3xl' 
-                >{title}</h2>
-                <p>{details}</p>
+                <input 
+                    ref={titleRef} 
+                    defaultValue={props.task.title} 
+                    placeholder="Title"
+                    className='text-3xl w-4/5'
+                    readOnly={!onEdit}
+                    onBlur={(e) => {
+                        dispatch(edit({...props.task, title: e.target.value}))
+                        setOnEdit(false)
+                    }}
+                    onChange={handleEdit}
+                />
+
                 <button
                     onClick={(e) => {
                         e.preventDefault()
-                        dispatch(remove(task.id))
+                        console.log('remove', props.task.id)
+                        dispatch(remove(props.task.id))
                     }} 
-                >delete</button>
+                >X</button>
             </div>
-        )
-    }
 
-    const Form = (task) => {
-        return (
-            <div
-                className="border-2 bg-gray-200 rounded flex flex-col" 
-            >
-                {/* <h1>Title</h1> */}
-                <input ref={titleRef} defaultValue={task.title} placeholder="Title"/>
-                {/* <h3>Details</h3> */}
-                <input ref={detailsRef} defaultValue={task.details} placeholder="Details"/>
-                <div
-                    className="flex flex-row" 
-                >
-                    <button
-                        onClick={(e) => {
-                            const title = titleRef.current.value                     
-                            const details = detailsRef.current.value
-                            const id = task.id
-                            dispatch(edit({id, title, details}));
-                            setOnEdit(false);
-                        }}   
-                    >Save</button>
-                    <button
-                        onClick={(e) => setOnEdit(false)}
-                    >Discard</button>
-                </div>
-            </div>
-        )
-    }
+            <input 
+                ref={detailsRef} 
+                defaultValue={props.task.details} 
+                placeholder="Details"
+                readOnly={!onEdit}
+                onBlur={(e) => {
+                    // console.log('blur...')
+                    dispatch(edit({...props.task, details: e.target.value}))
+                    setOnEdit(false)
+                }}
+                onChange={handleEdit}
+            />
 
-    if(onEdit){
-        return <div>{Form(props.task)}</div>
-    }
-    return <div>{Box(props.task)}</div>
+        </div>
+    )
 
 }

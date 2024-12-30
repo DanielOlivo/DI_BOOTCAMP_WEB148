@@ -1,10 +1,11 @@
 import { useSelector, useDispatch } from "react-redux";
 import { selectDay, edit } from "../tasks/taskSlice";
+import {select} from './pickerSlice'
 
 export default function Month(props){
 
     const dispatch = useDispatch()
-    const {first, last, today} = useSelector(state => state.month)
+    const {first, last, today, selected} = useSelector(state => state.month)
     const tasks = useSelector(state => state.tasks.all);
 
     let weeksAmount = 0
@@ -36,6 +37,7 @@ export default function Month(props){
         return UsualHeader(day);
     }
 
+
     const Cell = (date) => {
         if(date < 1 || date > last.date){
             return <div
@@ -43,9 +45,13 @@ export default function Month(props){
             ></div>
         }
         const isToday = first.year == today.year && first.month == today.month && date == today.date;
+        const isSelected = selected !== undefined && first.year == selected.year && first.month == selected.month && date == selected.date;
         return (
             <div
-                className="w-20 h-32 border-2 border-gray-200 hover:bg-gray-200 flex flex-col items-start" 
+                className={"w-20 h-32 border-2 hover:bg-gray-200 flex flex-col items-start "
+                    + (isSelected ? 'border-blue-500' : 'border-gray-200')
+                }
+
                 onDrop={(e) => {
                     e.preventDefault();
                     const data = JSON.parse(e.dataTransfer.getData('text/plain'));
@@ -63,6 +69,9 @@ export default function Month(props){
                     const payload = {year: first.year, month: first.month, date}
                     console.log('click', payload)
                     dispatch(selectDay(payload))
+                    const d = {year: first.year, month: first.month, date}
+                    console.log('select', d)
+                    dispatch(select(d));
                 }}
             >
                 {isToday ? TodayHeader(date) : UsualHeader(date)}

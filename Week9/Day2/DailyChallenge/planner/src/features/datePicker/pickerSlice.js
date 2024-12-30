@@ -9,7 +9,7 @@ function getInit(){
     const today = now();
     const {first, last} = getFirstAndLast(today.year, today.month)
 
-    return {first, last, today, selected: undefined};
+    return {first, last, today, selected: today};
 }
 
 const pickerSlice = createSlice({
@@ -38,9 +38,14 @@ const pickerSlice = createSlice({
             state.last = last;
             state.today = extract(new Date())
         },
+        select: (state, action) => {
+            // console.log('slice: select', action.payload)
+            state.selected = action.payload
+            // console.log('slice', state.selected)
+        }
     }
 })
 
-export const {setNextMonth, setPrevMonth} = pickerSlice.actions
+export const {setNextMonth, setPrevMonth, select} = pickerSlice.actions
 export default pickerSlice.reducer;
 
