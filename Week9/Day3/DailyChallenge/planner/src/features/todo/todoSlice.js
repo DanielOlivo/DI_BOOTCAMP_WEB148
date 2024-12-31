@@ -5,8 +5,14 @@ const initialState = [
     {
         id: nanoid(),
         title: 'task 1',
-        date: new Date(),
+        date: '2024-12-01',
         active: true
+    },
+    {
+        id: nanoid(),
+        title: 'task 2',
+        date: '2024-12-31',
+        active: false
     }
 ]
 

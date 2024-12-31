@@ -3,6 +3,7 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import List from './features/todo/List'
 import AddField from './features/todo/AddField'
+import Filter from './features/filter/Filter'
 // import './App.css'
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
         className='text-6xl mb-3' 
       >Planner</h1>
       <AddField />
+      <Filter />
       <List />
     </div>
   )
