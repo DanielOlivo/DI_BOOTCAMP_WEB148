@@ -1,4 +1,4 @@
-import { Meal, ApiResponse, transform } from "../../types/declarations";
+import { Meal, ApiResponse, transform, CategoryData } from "../../types/declarations";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 // import type { RootState } from "../../app/store";
 // import { fetchSearchByName } from "../../api/api";
@@ -7,27 +7,8 @@ export const fetchMeals = createAsyncThunk(
     'food/searchMeals',
     async(name: string) => {
         const url = "http://www.themealdb.com/api/json/v1/1/search.php?s=" +name
-        // const url = "api/json/v1/1/search.php?s=" +name
-        // const options = {
-        //     method: 'GET',
-        //     headers: {
-        //         'Content-Type': 'application/json'
-        //     },
-        //     // mode: 'no-cors',
-        // }
-
-        // const response = await fetch(url, options)
-        const response = await fetch(url, {
-            // method: 'GET',
-            // headers: {
-            //     'Content-Type': 'application/json'
-            // },
-            // mode: 'cors'
-        })
+        const response = await fetch(url)
         console.log(response)
-        // console.log(response.body)
-        // console.log('gonna to make json')
-        // console.log('data', data)
         const json = await response.json()
         console.log('json', json)
         const meals: ApiResponse[] = json.meals
@@ -36,9 +17,19 @@ export const fetchMeals = createAsyncThunk(
     }
 )
 
+export const fetchCategories = createAsyncThunk(
+    'food/fetchCategories',
+    async() => {
+        const url = "https://www.themealdb.com/api/json/v1/1/categories.php"
+        const response = await fetch(url)
+        const {categories} = await response.json()
+        return categories as CategoryData[]
+    }
+)
+
 type FoodSliceState = {
     status: 'idle' | 'pending' | 'fullfilled' | 'rejected'
-    items: Meal[]
+    items: Meal[] | CategoryData[]
     error?: boolean
     errorMessage?: string
 }
@@ -66,6 +57,14 @@ export const foodSlice = createSlice({
             state.error = true;
             state.status = 'rejected'
             state.errorMessage = action.error.message
+        })
+        .addCase(fetchCategories.pending, (state, action) => {
+            state.status = 'pending'
+            state.items = []
+        })
+        .addCase(fetchCategories.fulfilled, (state,action) => {
+            state.items = action.payload
+            state.status = 'fullfilled'
         })
     }
 })

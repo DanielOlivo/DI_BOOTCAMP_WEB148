@@ -1,7 +1,7 @@
 import { ReactNode, useRef } from "react";
 import { useAppDispatch, useSearch } from "../features/food/hooks";
 import { useDispatch } from "react-redux";
-import { fetchMeals } from "../features/food/foodSlice";
+import { fetchMeals, fetchCategories } from "../features/food/foodSlice";
 
 const SearchField = (): ReactNode => {
 
@@ -12,6 +12,10 @@ const SearchField = (): ReactNode => {
     const dispatch = useAppDispatch()
 
     const handleSearch = (arg: string) => {
+        if(arg == 'categories'){
+            dispatch(fetchCategories())
+            return
+        }
         dispatch(fetchMeals(arg))
     }
 
@@ -24,7 +28,7 @@ const SearchField = (): ReactNode => {
                     border border-gray-200 rounded w-2/3 px-4 py-4 
                 "
                 ref={fieldRef}
-                placeholder="pasta, salad..." 
+                placeholder="pasta, salad... or 'categories' to list categories" 
             />
             <button 
                 className="

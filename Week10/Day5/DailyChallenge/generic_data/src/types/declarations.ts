@@ -1,3 +1,5 @@
+import CategoryItem from "../components/Category"
+
 export type ApiResponse = {
     idMeal: string
     strMeal: string 
@@ -68,11 +70,25 @@ export type Meal = {
 }
 
 export function isMeal(meal: any): meal is Meal {
-    return (meal as Meal) !== undefined;
+    if(typeof meal !== 'object')
+        return false 
+    return ['id', 'name', 'category', 'instructions']
+        .every(prop => prop in meal)
 }
 
 export type ItemProp<T> = {
     data: T
+}
+
+export type CategoryData = {
+    idCategory: string 
+    strCategory: string
+    strCategoryThumb: string 
+    strCategoryDescription: string
+}
+
+export function isCategoryData(data: any): data is CategoryData {
+    return 'idCategory' in data
 }
 
 export function transform(res: ApiResponse): Meal {
