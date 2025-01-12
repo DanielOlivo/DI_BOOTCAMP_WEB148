@@ -1,36 +1,26 @@
-import { Recipe } from "../typeDeclarations"
-
 class RecipeItem {
 
-    readonly id: number
-    public title: string 
-    public ingredients: string[]
-    public instructions: string 
-    public isFavorite: boolean
+    constructor(
+        private _id: number,
+        private _title: string,
+        private _ingredients: string[],
+        private _instructions: string,
+        private _isFavorite: boolean
+    ){}
 
-    public removeFn: () => void
+    get id(){return this._id}
 
-    constructor({id, title, ingredients, instructions, isFavorite = false}: Recipe, removeFn: () => void){
-        this.id = id
-        this.title = title
-        this.ingredients = ingredients
-        this.instructions = instructions
-        this.isFavorite = isFavorite
+    get title(){return this._title};
+    set title(value: string) {this._title = value}
 
-        this.removeFn = removeFn
-    }
+    get ingredients(){return this._ingredients}
+    set ingredients(value: string[]){this._ingredients = value}
 
-    public toString(): string{
-        const obj = {
-            id: this.id, 
-            title: this.title, 
-            ingredients: this.ingredients, 
-            instructions: this.instructions, 
-            isFavorite: this.isFavorite
-        }
-        return JSON.stringify(obj)
-    }
+    get instructions(){return this._instructions}
+    set instructions(value: string){this._instructions = value}
+
+    get isFavorite(){return this._isFavorite}
+    set isFavorite(value: boolean){this._isFavorite = value}
 }
 
-
-export default RecipeItem;
+export default RecipeItem

@@ -71,4 +71,4 @@ export default [
     "ingredients": ["tomatoes", "onion", "garlic", "vegetable broth", "cream"],
     "isFavorite": false
   }
-].map(item => new RecipeItem(item, () => {}))
+].map((item) => new RecipeItem(item.id, item.title, item.ingredients, item.instructions, item.isFavorite))

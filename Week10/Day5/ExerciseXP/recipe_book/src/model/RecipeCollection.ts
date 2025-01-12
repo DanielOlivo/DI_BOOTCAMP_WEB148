@@ -1,52 +1,63 @@
-import RecipeItem from "./RecipeItem";
-import { IRecipes, RecipeAdder, RecipeFavToggler } from "../typeDeclarations";
+import RecipeItem from "./RecipeItem"
 
-class RecipeCollection implements RecipeAdder, RecipeFavToggler, IRecipes {
+class RecipeCollection {
 
-    public recipes: RecipeItem[] = []
+    private _list: RecipeItem[]
 
-    public triggerFn: () => void = () => {};
+    constructor(lst: RecipeItem[] = []){
+        this._list = lst;
+        this.save()
 
-    public add(recipe: RecipeItem){
-        recipe.removeFn = () => this.remove(recipe.id)
-        this.recipes.push(recipe)
+        if(this._list.length === 0){
+            console.log('how')
+            this.loadItems()
+        }
+
+        console.log(this._list)
     }
 
-    public remove(recipeId: number){
-        this.recipes = this.recipes.filter(({id}) => id !== recipeId)
-        this.triggerFn()
+    get list(){return this._list}
+
+    add(newItem: RecipeItem): void {
+        this._list.push(newItem)
+        this.save()
     }
 
-    public removeAll(): void{
-        this.recipes = []
-        // this.triggerFn()
+    remove(id: number): void{
+        this._list = this._list.filter(i => i.id !== id)
+        this.save()
     }
 
-    public toggleFavorite(recipeId: number){
-        const recipe = this.recipes.find(({id}) => id === recipeId)
+    toggleFavorite(id: number){
+        const item = this._list.find(i => i.id === id)
 
-        if(recipe){
-            recipe.isFavorite = !recipe?.isFavorite
+        if(item){
+            item.isFavorite = !item?.isFavorite
+            this.save()
         }
     }
 
-    public saveToLocalStorage(recipeId: number){
-        const recipe = this.recipes.find(({id}) => id === recipeId)
-        if(recipe){
-            window.localStorage.setItem(String(recipe.id), recipe.toString())
-        }
+    save(): void {
+        window.localStorage.setItem('items', JSON.stringify(this._list))
     }
 
-    public loadFromLocalStorage(recipeId: number): RecipeItem | undefined{
-        const recipe = window.localStorage.getItem(String(recipeId))
-        if(recipe){
-            return new RecipeItem(JSON.parse(recipe), () => this.remove(recipeId))
-        }
-        throw new Error('recipe not found')
+    loadItems(): void {
+        const saved = 
+            window.localStorage.getItem('items')
+
+        if(!saved)
+            return
+
+        const items: {_id: number, _title:string, _instructions:string, _ingredients: string[], _isFavorite: boolean}[] = JSON.parse(saved)
+
+        this._list = items.map((i) =>
+            new RecipeItem(i._id, i._title, i._ingredients, i._instructions, i._isFavorite))
     }
-    
+
+    clear(): void {
+        this._list = []
+        this.save()
+    }
 }
 
-// type RecipeCollection
-
-export default RecipeCollection;
+export default RecipeCollection
